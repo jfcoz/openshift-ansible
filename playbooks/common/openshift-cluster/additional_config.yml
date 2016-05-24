@@ -50,3 +50,5 @@
     when: deploy_infra | bool and attach_registry_volume | bool
   - role: openshift_metrics
     when: openshift.hosted.metrics.deploy | bool
+  - role: openshift_hosted_logging
+    when: openshift.hosted.logging.deploy | bool
