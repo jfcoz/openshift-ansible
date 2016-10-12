@@ -37,7 +37,9 @@
     --namespace openshift-infra
     policy add-role-to-user edit
     system:serviceaccount:openshift-infra:metrics-deployer
-  when: 'system:serviceaccount:openshift-infra:metrics-deployer' not in edit_rolebindings.stdout and inventory_hostname == "{{ groups['masters'][0] }}"
+  when:
+    - "'system:serviceaccount:openshift-infra:metrics-deployer' not in edit_rolebindings.stdout"
+    - inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Test cluster-reader permissions
   command: >
@@ -56,7 +58,9 @@
     --namespace openshift-infra
     policy add-cluster-role-to-user cluster-reader
     system:serviceaccount:openshift-infra:heapster
-  when: 'system:serviceaccount:openshift-infra:heapster' not in cluster_reader_clusterrolebindings.stdout and inventory_hostname == "{{ groups['masters'][0] }}"
+  when: 
+    - "'system:serviceaccount:openshift-infra:heapster' not in cluster_reader_clusterrolebindings.stdout"
+    - inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Create metrics-deployer secret
   command: >
