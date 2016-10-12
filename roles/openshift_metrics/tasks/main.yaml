@@ -7,15 +7,18 @@
   command: mktemp -d /tmp/openshift-ansible-XXXXXX
   register: mktemp
   changed_when: False
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Record kubeconfig tmp dir
   set_fact:
     openshift_metrics_kubeconfig: "{{ mktemp.stdout }}/admin.kubeconfig"
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Copy the admin client config(s)
   command: >
     cp {{ openshift_master_config_dir }}/admin.kubeconfig {{ openshift_metrics_kubeconfig }}
   changed_when: False
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Set hosted metrics facts
   openshift_facts:
@@ -25,6 +28,7 @@
                        | oo_openshift_env }}"
     openshift_env_structures:
     - 'openshift.hosted.metrics.*'
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 - set_fact:
     # Prefer the master facts over bare variables if present, prefer
@@ -55,6 +59,7 @@
     - metrics-infra=hawkular-cassandra
   failed_when: false
   changed_when: false
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Check for previous deployer
   shell: >
@@ -65,16 +70,19 @@
   register: metrics_deployer_status
   failed_when: false
   changed_when: false
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Record current deployment status
   set_fact:
     greenfield: "{{ not metrics_deployer_status.rc == 0 }}"
     failed_error: "{{ True if 'Error' in metrics_deployer_status.stdout else False }}"
     metrics_running: "{{ metrics_pods_status.results | oo_collect(attribute='rc') == [0,0,0] }}"
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 - name: Set deployment mode
   set_fact:
     deployment_mode: "{{ 'refresh' if (failed_error | bool or metrics_upgrade | bool) else 'deploy' }}"
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 # TODO: handle non greenfield deployments in the future
 - include: install.yml
@@ -85,3 +93,4 @@
     name: "{{ mktemp.stdout }}"
     state: absent
   changed_when: False
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
