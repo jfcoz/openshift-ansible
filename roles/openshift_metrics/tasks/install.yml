@@ -9,6 +9,7 @@
   register: serviceaccount
   changed_when: false
   failed_when: false
+  when: inventory_hostname == masters[0]
 
 - name: Create metrics-deployer Service Account
   shell: >
@@ -17,7 +18,7 @@
     --config={{ openshift_metrics_kubeconfig }}
     --namespace openshift-infra
     create -f -
-  when: serviceaccount.rc == 1
+  when: serviceaccount.rc == 1 and inventory_hostname == masters[0]
 
 - name: Test edit permissions
   command: >
@@ -27,6 +28,7 @@
     get rolebindings -o jsonpath='{.items[?(@.metadata.name == "edit")].userNames}'
   register: edit_rolebindings
   changed_when: false
+  when: inventory_hostname == masters[0]
 
 - name: Add edit permission to the openshift-infra project to metrics-deployer SA
   command: >
@@ -35,7 +37,7 @@
     --namespace openshift-infra
     policy add-role-to-user edit
     system:serviceaccount:openshift-infra:metrics-deployer
-  when: "'system:serviceaccount:openshift-infra:metrics-deployer' not in edit_rolebindings.stdout"
+  when: "'system:serviceaccount:openshift-infra:metrics-deployer' not in edit_rolebindings.stdout and inventory_hostname == masters[0]"
 
 - name: Test cluster-reader permissions
   command: >
@@ -45,6 +47,7 @@
     get clusterrolebindings -o jsonpath='{.items[?(@.metadata.name == "cluster-reader")].userNames}'
   register: cluster_reader_clusterrolebindings
   changed_when: false
+  when: inventory_hostname == masters[0]
 
 - name: Add cluster-reader permission to the openshift-infra project to heapster SA
   command: >
@@ -53,7 +56,7 @@
     --namespace openshift-infra
     policy add-cluster-role-to-user cluster-reader
     system:serviceaccount:openshift-infra:heapster
-  when: "'system:serviceaccount:openshift-infra:heapster' not in cluster_reader_clusterrolebindings.stdout"
+  when: "'system:serviceaccount:openshift-infra:heapster' not in cluster_reader_clusterrolebindings.stdout and inventory_hostname == masters[0]"
 
 - name: Create metrics-deployer secret
   command: >
@@ -64,6 +67,7 @@
   register: metrics_deployer_secret
   changed_when: metrics_deployer_secret.rc == 0
   failed_when: "metrics_deployer_secret.rc == 1 and 'already exists' not in metrics_deployer_secret.stderr"
+  when: inventory_hostname == masters[0]
 
 # TODO: extend this to allow user passed in certs or generating cert with
 # OpenShift CA
@@ -75,15 +79,18 @@
         | {{ openshift.common.client_binary }} --namespace openshift-infra \
         --config={{ openshift_metrics_kubeconfig }} \
         create -o name -f -"
+  when: inventory_hostname == masters[0]
 
 - name: Deploy Metrics
   shell: "{{ deployer_cmd }}"
   register: deploy_metrics
   failed_when: "'already exists' not in deploy_metrics.stderr and deploy_metrics.rc != 0"
   changed_when: deploy_metrics.rc == 0
+  when: inventory_hostname == masters[0]
 
 - set_fact:
     deployer_pod: "{{ deploy_metrics.stdout[1:2] }}"
+  when: inventory_hostname == masters[0]
 
 # TODO: re-enable this once the metrics deployer validation issue is fixed
 # when using dynamically provisioned volumes
@@ -98,6 +105,7 @@
   failed_when: False
   retries: 60
   delay: 10
+  when: inventory_hostname == masters[0]
 
 - name: Configure master for metrics
   modify_yaml:
@@ -111,4 +119,4 @@
     role: master
     local_facts:
       metrics_public_url: "https://{{ metrics_hostname }}/hawkular/metrics"
-  when: deploy_result | changed
+  when: deploy_result | changed and inventory_hostname == masters[0]
