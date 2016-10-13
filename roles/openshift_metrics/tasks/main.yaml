@@ -44,7 +44,7 @@
     cassandra_pv_size: "{{ ',CASSANDRA_PV_SIZE=' ~ openshift.hosted.metrics.storage_volume_size if openshift.hosted.metrics.storage_volume_size | default(none) is not none else '' }}"
     image_prefix: "{{ ',IMAGE_PREFIX=' ~ openshift.hosted.metrics.deployer_prefix if 'deployer_prefix' in openshift.hosted.metrics else '' }}"
     image_version: "{{ ',IMAGE_VERSION=' ~ openshift.hosted.metrics.deployer_version if 'deployer_version' in openshift.hosted.metrics else '' }}"
-  when: inventory_hostname == masters[0]
+  when: inventory_hostname == "{{ groups['masters'][0] }}"
 
 
 - name: Check for existing metrics pods
