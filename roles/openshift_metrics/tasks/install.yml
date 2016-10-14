@@ -11,6 +11,7 @@
   failed_when: false
 
 - name: Create metrics-deployer Service Account
+  run_once: true
   shell: >
     echo {{ metrics_deployer_sa | to_json | quote }} |
     {{ openshift.common.client_binary }}
@@ -20,6 +21,7 @@
   when: serviceaccount.rc == 1
 
 - name: Test edit permissions
+  run_once: true
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_metrics_kubeconfig }}
@@ -29,6 +31,7 @@
   changed_when: false
 
 - name: Add edit permission to the openshift-infra project to metrics-deployer SA
+  run_once: true
   command: >
     {{ openshift.common.admin_binary }}
     --config={{ openshift_metrics_kubeconfig }}
@@ -38,6 +41,7 @@
   when: "'system:serviceaccount:openshift-infra:metrics-deployer' not in edit_rolebindings.stdout"
 
 - name: Test cluster-reader permissions
+  run_once: true
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_metrics_kubeconfig }}
@@ -47,6 +51,7 @@
   changed_when: false
 
 - name: Add cluster-reader permission to the openshift-infra project to heapster SA
+  run_once: true
   command: >
     {{ openshift.common.admin_binary }}
     --config={{ openshift_metrics_kubeconfig }}
@@ -56,6 +61,7 @@
   when: "'system:serviceaccount:openshift-infra:heapster' not in cluster_reader_clusterrolebindings.stdout"
 
 - name: Create metrics-deployer secret
+  run_once: true
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_metrics_kubeconfig }}
@@ -68,6 +74,7 @@
 # TODO: extend this to allow user passed in certs or generating cert with
 # OpenShift CA
 - name: Build metrics deployer command
+  run_once: true
   set_fact:
     deployer_cmd: "{{ openshift.common.client_binary }} process -f \
       {{ metrics_template_dir }}/metrics-deployer.yaml -v \
@@ -77,6 +84,7 @@
         create -o name -f -"
 
 - name: Deploy Metrics
+  run_once: true
   shell: "{{ deployer_cmd }}"
   register: deploy_metrics
   failed_when: "'already exists' not in deploy_metrics.stderr and deploy_metrics.rc != 0"
@@ -88,6 +96,7 @@
 # TODO: re-enable this once the metrics deployer validation issue is fixed
 # when using dynamically provisioned volumes
 - name: "Wait for image pull and deployer pod"
+  run_once: true
   shell: >
     {{ openshift.common.client_binary }}
     --namespace openshift-infra
