@@ -11,7 +11,7 @@
     when: persistent_volumes | length > 0 or persistent_volume_claims | length > 0
 
 - name: Create Hosted Resources
-  hosts: oo_first_master
+  hosts: oo_masters
   tags:
   - hosted
   pre_tasks:
