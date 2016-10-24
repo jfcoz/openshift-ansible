@@ -1,4 +1,5 @@
 - name: test if service accounts exists
+  run_once: True
   command: >
       {{ openshift.common.client_binary }} get sa {{ item }} -n {{ openshift_serviceaccounts_namespace }}
   with_items: "{{ openshift_serviceaccounts_names }}"
@@ -18,6 +19,7 @@
   - "{{ account_test.results }}"
 
 - name: test if scc needs to be updated
+  run_once: True
   command: >
       {{ openshift.common.client_binary }} get scc {{ item }} -o yaml
   changed_when: false
@@ -26,6 +28,7 @@
   with_items: "{{ openshift_serviceaccounts_sccs }}"
 
 - name: Grant the user access to the appropriate scc
+  run_once: True
   command: >
       {{ openshift.common.admin_binary }} policy add-scc-to-user
       {{ item.1.item }} system:serviceaccount:{{ openshift_serviceaccounts_namespace }}:{{ item.0 }}
