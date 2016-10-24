@@ -62,6 +62,7 @@
   changed_when: false
 
 - name: Import Centos Image streams
+  run_once: True
   command: >
     {{ openshift.common.client_binary }} {{ openshift_examples_import_command }} -n openshift -f {{ centos_image_streams }}
   when: openshift_examples_load_centos | bool
@@ -70,6 +71,7 @@
   changed_when: false
 
 - name: Import db templates
+  run_once: True
   command: >
     {{ openshift.common.client_binary }} {{ openshift_examples_import_command }} -n openshift -f {{ db_templates_base }}
   when: openshift_examples_load_db_templates | bool
@@ -99,6 +101,7 @@
   changed_when: false
 
 - name: Import quickstart-templates
+  run_once: True
   command: >
     {{ openshift.common.client_binary }} {{ openshift_examples_import_command }} -n openshift -f {{ quickstarts_base }}
   when: openshift_examples_load_quickstarts | bool
@@ -107,6 +110,7 @@
   changed_when: false
 
 - name: Import origin infrastructure-templates
+  run_once: True
   command: >
     {{ openshift.common.client_binary }} {{ openshift_examples_import_command }} -n openshift -f {{ infrastructure_origin_base }}
   when: openshift_examples_load_centos | bool
@@ -115,6 +119,7 @@
   changed_when: false
 
 - name: Import enterprise infrastructure-templates
+  run_once: True
   command: >
     {{ openshift.common.client_binary }} {{ openshift_examples_import_command }} -n openshift -f {{ infrastructure_enterprise_base }}
   when: openshift_examples_load_rhel | bool
@@ -138,6 +143,7 @@
   changed_when: false
 
 - name: Import xPaas image streams
+  run_once: True
   command: >
     {{ openshift.common.client_binary }} {{ openshift_examples_import_command }} -n openshift -f {{ xpaas_image_streams }}
   when: openshift_examples_load_xpaas | bool
@@ -146,6 +152,7 @@
   changed_when: false
 
 - name: Import xPaas templates
+  run_once: True
   command: >
     {{ openshift.common.client_binary }} {{ openshift_examples_import_command }} -n openshift -f {{ xpaas_templates_base }}
   when: openshift_examples_load_xpaas | bool

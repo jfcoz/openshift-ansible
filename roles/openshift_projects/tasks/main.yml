@@ -19,6 +19,7 @@
   register: project_test
 
 - name: Create projects
+  run_once: True
   command: >
     {{ openshift.common.admin_binary }} --config={{ mktemp.stdout }}/admin.kubeconfig
     new-project {{ item.item.key }}
