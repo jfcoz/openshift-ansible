@@ -7,6 +7,7 @@
   register: account_test
 
 - name: create the service account
+  run_once: True
   shell: >
        echo {{ lookup('template', '../templates/serviceaccount.j2')
        | from_yaml | to_json | quote }} | {{ openshift.common.client_binary }}
