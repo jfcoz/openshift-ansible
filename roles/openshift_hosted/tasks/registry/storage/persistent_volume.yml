@@ -16,6 +16,7 @@
     volume_attached: "{{ registry_volume_claim in (registry_volumes_output).stdout | default(['']) }}"
 
 - name: Add volume to dc/docker-registry
+  run_once: True
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_hosted_kubeconfig }}

@@ -44,6 +44,7 @@
   when: secrets.rc == 0 and (secrets.stdout|from_json)['data']['config.yml'] != registry_config and same_storage_provider | bool
 
 - name: Create registry config secret
+  run_once: True
   shell: >
     echo '{{ registry_config_secret |to_json }}' |
     {{ openshift.common.client_binary }}
@@ -63,6 +64,7 @@
   changed_when: false
 
 - name: Add secrets to registry service account
+  run_once: True
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_hosted_kubeconfig }}
@@ -80,6 +82,7 @@
   changed_when: false
 
 - name: Add secrets to registry deployment config
+  run_once: True
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_hosted_kubeconfig }}
@@ -98,6 +101,7 @@
   changed_when: false
 
 - name: Add registry environment variable
+  run_once: True
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_hosted_kubeconfig }}
@@ -106,6 +110,7 @@
   when: "'REGISTRY_CONFIGURATION_PATH' not in oc_env.stdout"
 
 - name: Redeploy registry
+  run_once: True
   command: >
     {{ openshift.common.client_binary }}
     --config={{ openshift_hosted_kubeconfig }}

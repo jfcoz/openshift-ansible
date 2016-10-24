@@ -29,6 +29,7 @@
     replicas: "{{ openshift.hosted.registry.replicas | default(l_default_replicas) }}"
 
 - name: Create OpenShift registry
+  run_once: True
   command: >
     {{ openshift.common.admin_binary }} registry --create
     --config={{ openshift_hosted_kubeconfig }}
