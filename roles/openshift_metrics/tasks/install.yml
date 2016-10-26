@@ -110,6 +110,7 @@
   delay: 10
 
 - name: Configure master for metrics
+  serial: 1
   modify_yaml:
     dest: "{{ openshift.common.config_base }}/master/master-config.yaml"
     yaml_key: assetConfig.metricsPublicURL
