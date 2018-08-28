@@ -9,8 +9,8 @@
 %global __requires_exclude ^/usr/bin/ansible-playbook$
 
 Name:           openshift-ansible
-Version:        3.10.34
-Release:        1
+Version:        3.10.38
+Release:        1%{?dist}
 Summary:        Openshift and Atomic Enterprise Ansible
 License:        ASL 2.0
 URL:            https://github.com/openshift/openshift-ansible
@@ -163,6 +163,41 @@ BuildArch:     noarch
 
 
 %changelog
+<<<<<<< HEAD
+=======
+* Tue Aug 28 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.10.38-1
+- Add %%{?dist} back into Release (sdodson@redhat.com)
+
+* Tue Aug 28 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.10.37-1
+- Ensure connection local on local host play (mgugino@redhat.com)
+
+* Mon Aug 27 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.10.36-1
+- Move filters (mateus.caruccio@getupcloud.com)
+- Overwrite grafana datasource and dashboards (mateus.caruccio@getupcloud.com)
+- Dont fail when datasource or dashboard already exists
+  (mateus.caruccio@getupcloud.com)
+- Adding build info to image. (#9760) (kwoodson@redhat.com)
+- Add support to static pods for etcd helpers (sdodson@redhat.com)
+- Refactor csr approvals: oc_csr_approve (mgugino@redhat.com)
+- fix error in cnx conditional regex (derekmcquay@gmail.com)
+- If the cluster's arch is power (ppc64le) don't install default catalog.
+  Create v3.10 imagestreams, quickstart, and db-templates that support ppc64le
+  (jeyoung@redhat.com)
+- Log driver for JSON should be json-file (umohnani@redhat.com)
+- GlusterFS: Run kernel_modules.yml once on all nodes (jarrpa@redhat.com)
+- control plane upgrade: don't remove -master package on Atomic
+  (vrutkovs@redhat.com)
+- Update search string for registry console (mgugino@redhat.com)
+- Increase maximum number of open file descriptors for dnsmasq
+  (ichavero@redhat.com)
+- Refactor registry-console template and vars (mgugino@redhat.com)
+
+* Wed Aug 22 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.10.35-1
+- python-scandir was renamed in EPEL (vrutkovs@redhat.com)
+- cluster monitoring operator: add nodeselector (vrutkovs@redhat.com)
+- Use openshift_image_tag for registry-console upgrade (rteague@redhat.com)
+
+>>>>>>> upstream/release-3.10
 * Tue Aug 21 2018 AOS Automation Release Team <aos-team-art@redhat.com> 3.10.34-1
 - Fix conditional for cri-o system container removal (rteague@redhat.com)
 
