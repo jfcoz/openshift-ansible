@@ -6,6 +6,9 @@
     - openshift_deployment_type == 'openshift-enterprise'
     - not openshift_use_crio | bool
 
+- name: Start node image prepull
+  import_tasks: prepull.yml
+
 - import_tasks: dnsmasq_install.yml
 - import_tasks: dnsmasq.yml
 
@@ -52,16 +55,14 @@
     sysctl_file: "/etc/sysctl.d/99-openshift.conf"
     reload: yes
 
-# Required in some selinux policy versions see
-# https://bugzilla.redhat.com/show_bug.cgi?id=1587825
-# https://bugzilla.redhat.com/show_bug.cgi?id=1549765
-- name: Setting sebool container_manage_cgroup
-  seboolean:
-    name: container_manage_cgroup
-    state: yes
-    persistent: yes
+- import_tasks: selinux_container_cgroup.yml
 
 - import_tasks: registry_auth.yml
+
+- import_tasks: prepull_check.yml
+
+- import_tasks: copy_image_to_ostree.yml
+  when: openshift_is_atomic | bool
 
 - name: include standard node config
   import_tasks: config.yml
